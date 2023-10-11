@@ -1,0 +1,52 @@
+server:
+  port: 8081
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  rabbitmq: 
+    host: homenas.ycbd.work
+    port: 5672
+    username: ycbd
+    password: ycbd74
+  mvc:
+    pathmatch:
+      matching-strategy:  ANT_PATH_MATCHER
+  #数据库配置
+  datasource:
+#    url: jdbc:mysql://192.168.31.2:3306/photoExive?useSSL=false&useTimezone=true&allowPublicKeyRetrieval=true
+    #&rewriteBatchedStatements=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://home.ycbd.work:3306/file?useSSL=false&useTimezone=true&allowPublicKeyRetrieval=true
+    username: root
+    password: Ycbd74mysql!@#
+    # 配置初始化大小、最小、最大
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: SELECT 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小。如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。分库分表较多的数据库，建议配置为false。
+    poolPreparedStatements: false
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 配置监控统计拦截的filters
+    filters: stat
+mybatis:
+    mapper-locations: classpath:/mapper/*Mapper.xml
+    type-aliases-package: com.ycbd.exiv2service.Mappers
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+system:
+      prefix: http://localhost:8080/
+      script: /Users/ycbd/exiv2
+      root:   /Volumes/homes
+      runmode: command
+      csvRootDirName: macoscsvfile
+
+

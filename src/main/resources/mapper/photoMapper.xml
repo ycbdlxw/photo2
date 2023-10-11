@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycbd.photoservice.Mappers.photoMapper">
+<!--菜单数据查询-->
+<select id="getMenuTree" resultType="Map">
+  WITH RECURSIVE menu_tree AS (
+    SELECT id, menu_id, title, navi_id, path, icon, component, parent_id, NULL AS childrens
+    FROM menus
+    WHERE parent_id =0
+    UNION ALL
+    SELECT m.id, m.menu_id, m.title, m.navi_id, m.path, m.icon, m.component, m.parent_id, t.childrens
+    FROM menus m
+    JOIN menu_tree t ON m.parent_id = t.menu_id
+  )
+  SELECT JSON_OBJECT('menuId', m.menu_id, 'title', m.title, 'naviId', m.navi_id, 'path', m.path, 'icon', m.icon, 'childrens', IFNULL(c.childrens, JSON_ARRAY())) AS menu
+  FROM menu_tree m
+  LEFT JOIN (
+    SELECT parent_id, JSON_ARRAYAGG(JSON_OBJECT('menuId', menu_id, 'title', title, 'path', path, 'icon', icon)) AS childrens
+    FROM menus
+    GROUP BY parent_id
+  ) c ON m.menu_id = c.parent_id
+  ORDER BY m.menu_id;
+</select>
+<!--批量新增表数据-->
+ <insert id="add" parameterType="Map">
+        INSERT INTO `${table}` (${Columns}) VALUES
+           <foreach collection="saveData" index="index" item="item" separator=",">
+              <foreach collection="item" index="key" item="value" open="(" close=")" separator=",">
+                 #{value}
+               </foreach>
+           </foreach>
+    </insert>
+    <!--从列属性表中查询编辑字段-->
+    <select id="getFormData"  resultType="Map">
+            SELECT name as field,pagename as label,
+               ${showTypeStr}
+               AS type,options from column_attribute 
+            where IsPri =0 and editFlag=1 and dbTableName ='${table}'
+    </select>
+    <!--按查询条件查询数据总数-->
+    <select id="getDataCount" resultType="java.lang.Integer">
+        SELECT count(*) as total FROM ${table}
+        <if test="whereStr != null and whereStr != ''">
+                WHERE ${whereStr}
+        </if>
+    </select>
+     <!--按查询条件进行数据查询-->
+    <select id="getData" resultType="Map">
+        SELECT * FROM ${table}
+        <if test="whereStr != null and whereStr != ''">
+                WHERE ${whereStr}
+        </if>
+    </select>
+     <!--分页查询数据-->
+     <select id="getItemsData"  resultType="Map">
+            SELECT * FROM ${table} 
+            WHERE 1=1
+            <if test="whereStr != null and whereStr != ''">
+                and ${whereStr}
+            </if>
+            <if test="sortByAndType != null and sortByAndType != ''">
+                order by ${sortByAndType}
+            </if>
+            <if test="groupbyString != null and groupbyString != ''">
+                group by ${groupbyString}
+            </if>
+             <if test="pageIndex != null and pageIndex >-1 ">
+                LIMIT ${pageIndex},${pageSize}
+            </if>
+           
+    </select>
+     <!--指定表的查询字段-->
+    <select id="getSearchData"  resultType="Map">
+     SELECT name as field,pagename as label,${showTypeStr}
+               AS type,options from column_attribute 
+     where IsPri =0 and searchFlag=1 and dbTableName ='${table}'
+
+    </select>
+    <!--查询地理位置 gpsinfo-->
+     <select id="getPlaceName"  resultType="String">
+            select GROUP_CONCAT(place_name,",")  from gpsinfo     
+    </select>
+    <!--查询用户设备-->
+    <select id="getUserAccount"  resultType="Map">
+            SELECT ua.id, ua.username, ua.email, pg.name AS permission_group
+            FROM user_account ua
+            JOIN permission_group pg ON ua.permission_group_id = pg.id
+            WHERE ua.username = '${name}' AND ua.password = '${password}';    
+    </select>
+    <!--查询相片，通过相册-->
+    <!--查询相片，通过日期时间-->
+
+    <select id="getTreeData" resultType="Map">
+            SELECT
+            id,
+            parentID,
+            level,
+            name,
+            CONCAT(REPEAT('    ', level - 1), name) AS tree_name
+        FROM
+            (
+            SELECT
+                id,
+                parentID,
+                level,
+                name,
+                @pv := IF(parentID = @id, id, @pv) AS dummy,
+                @id := id
+            FROM
+                ${table},
+                (SELECT @pv := 0, @id := 0) tmp
+            ORDER BY
+                parentID, id
+            ) dirtree_sorted
+        ORDER BY
+            id;
+    </select>
+
+</mapper>

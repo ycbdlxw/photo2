@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 日志级别从低到高分为TRACE < DEBUG < INFO < WARN < ERROR < FATAL，如果设置为WARN，则低于WARN的信息都不会输出 -->
+
+<!-- scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true -->
+
+<!-- scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。 -->
+
+<!-- debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
+
+<configuration scan="false" debug="false" scanPeriod="60 seconds">
+
+<!--设置系统日志目录-->
+<property name="log.path" value="logs"/>
+<property name="log.app" value="photo"/>
+<!--超过多大压缩文件-->
+<property name="gzSize" value="5MB"/>
+<!--只保留15天-->
+<property name="saveDay" value="15"/>
+<!-- 彩色日志 -->
+<conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+<conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+<conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+<!-- 彩色日志格式 -->
+<property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <springProperty scope="context" name="dburl" source="spring.datasource.url" defaultValue="jdbc:mysql://homenas.ycbd.work:3306/scrm?useSSL=false&amp;useTimezone=true&amp;serverTimezone=GMT%2B8" />
+    <springProperty scope="context" name="username" source="spring.datasource.username" defaultValue="root" />
+    <springProperty scope="context" name="password" source="spring.datasource.password" defaultValue="Ycbd74mysql" />
+
+
+    <!-- 控制台输出 -->
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+        <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+    </encoder>
+</appender>
+<!-- 时间滚动输出 level为 DEBUG 日志 -->
+<appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <file>${log.path}/${log.app}_debug.log</file>
+    <!--日志文件输出格式-->
+    <encoder>
+        <!--<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        <charset>UTF-8</charset> <!-- 设置字符集 -->
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- 日志归档 -->
+        <fileNamePattern>${log.path}/debug/${log.app}-debug-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>${gzSize}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <!--日志文件保留天数-->
+        <maxHistory>${saveDay}</maxHistory>
+    </rollingPolicy>
+    <!-- 此日志文件只记录debug级别的 -->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>debug</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+</appender>
+
+<!-- 时间滚动输出 level为 INFO 日志 -->
+<appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <file>${log.path}/${log.app}_info.log</file>
+    <!--日志文件输出格式-->
+    <encoder>
+        <!--<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        <charset>UTF-8</charset>
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- 每天日志归档路径以及格式 -->
+        <fileNamePattern>${log.path}/info/${log.app}-info-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>${gzSize}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <!--日志文件保留天数-->
+        <maxHistory>${saveDay}</maxHistory>
+    </rollingPolicy>
+    <!-- 此日志文件只记录info级别的 -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>info</level>
+    </filter>
+</appender>
+
+<!-- 时间滚动输出 level为 WARN 日志 -->
+<appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <file>${log.path}/${log.app}_warn.log</file>
+    <!--日志文件输出格式-->
+    <encoder>
+        <!--<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${log.path}/warn/${log.app}-warn-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>${gzSize}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <!--日志文件保留天数-->
+        <maxHistory>${saveDay}</maxHistory>
+    </rollingPolicy>
+    <!-- 此日志文件只记录warn级别的 -->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>warn</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+</appender>
+
+
+<!-- 时间滚动输出 level为 ERROR 日志 -->
+<appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <file>${log.path}/${log.app}_error.log</file>
+    <!--日志文件输出格式-->
+    <encoder>
+        <!--<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${log.path}/error/${log.app}-error-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>${gzSize}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <!--日志文件保留天数-->
+        <maxHistory>${saveDay}</maxHistory>
+    </rollingPolicy>
+    <!-- 此日志文件只记录ERROR级别的 -->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>ERROR</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+</appender>
+     <!-- 将日志写入数据库 -->
+<!--    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">-->
+<!--        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">-->
+<!--            <driverClass>com.mysql.cj.jdbc.Driver</driverClass>-->
+<!--            <url>${dburl}</url>-->
+<!--            <user>${username}</user>-->
+<!--            <password>${password}</password>-->
+<!--        </connectionSource>-->
+
+<!--    </appender>-->
+<!-- druid 日志 -->
+<appender name="druidSqlRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 正在记录的日志文件的路径及文件名 -->
+    <file>${log.path}/${log.app}_druid.log</file>
+    <!--日志文件输出格式-->
+    <encoder>
+        <!--<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+        <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] - %m%n</pattern>
+        <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+    </encoder>
+    <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${log.path}/druid/${log.app}-druid-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>${gzSize}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <!--日志文件保留天数-->
+        <maxHistory>${saveDay}</maxHistory>
+    </rollingPolicy>
+    <!-- 此日志文件只记录DEBUG级别的 -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>DEBUG</level>
+    </filter>
+</appender>
+
+<logger name="druid.sql.Statement" level="debug" additivity="false">
+    <appender-ref ref="druidSqlRollingFile"/>
+</logger>
+
+
+<!--异步输出-->
+<appender name="async_druid_log" class="ch.qos.logback.classic.AsyncAppender">
+    <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+    <discardingThreshold>0</discardingThreshold>
+    <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+    <queueSize>256</queueSize>
+    <!-- 添加附加的appender,最多只能添加一个 -->
+    <appender-ref ref="druidSqlRollingFile"/>
+</appender>
+<appender name="async_info_log" class="ch.qos.logback.classic.AsyncAppender">
+    <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+    <discardingThreshold>0</discardingThreshold>
+    <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+    <queueSize>256</queueSize>
+    <!-- 添加附加的appender,最多只能添加一个 -->
+    <appender-ref ref="INFO_FILE"/>
+</appender>
+<appender name="async_debug_log" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>256</queueSize>
+    <appender-ref ref="DEBUG_FILE"/>
+</appender>
+<appender name="async_warn_log" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>256</queueSize>
+    <appender-ref ref="WARN_FILE"/>
+</appender>
+<appender name="async_error_log" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>256</queueSize>
+    <appender-ref ref="ERROR_FILE"/>
+</appender>
+<!--<appender name="async_db_log" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--    <discardingThreshold>0</discardingThreshold>-->
+<!--    <queueSize>256</queueSize>-->
+<!--    <includeCallerData>true</includeCallerData>-->
+<!--    <appender-ref ref="DB"/>-->
+<!--</appender>-->
+<!--    <appender name="MONGODB" class="com.ycbd.photo.Interface.MongoDBAppender">-->
+<!--        <appName>photoapi</appName>-->
+<!--        <collectionName>mylog</collectionName>-->
+<!--    </appender>-->
+ <!-- spring profile不同环境不同设置 -->
+    <springProfile name="local,dev,master">
+        <!-- 打印sql -->
+        <logger name="druid.sql" level="INFO" />
+    </springProfile>
+
+<root level="info">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="async_info_log" />
+<!--    <appender-ref ref="async_druid_log" />-->
+  <!--   <appender-ref ref="async_warn_log" /> -->
+    <appender-ref ref="async_error_log" />
+<!--    <appender-ref ref="MONGODB" />-->
+</root>
+</configuration>
