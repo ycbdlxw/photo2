@@ -37,6 +37,8 @@ public class ExivService {
     protected  CmdService cmdService;
     @Value("${system.script:/Users/ycbd/exiv2}")
     String script;
+     @Value("${system.root:/Volumes/homes}")
+    String root;
     public void getMetaDataInfo(String it, Map<String,Object> map){
       String dateTimeStr="";
         Map<String,String> metaMap=cmdService.getMetaObjValue(it,"subject,ImageDescription,DateTime,Exif.Image.Model,GPS");
@@ -217,19 +219,21 @@ public class ExivService {
     }
 
     /**
-     *
+     *  增加相片内容，包括标题，相册名称，相片描述，位置信息
      * @param filename  保存的相片文件名称
      * @param subject   文件标题内容，可以多个，以,号隔开
      * @return
      */
-    public List<String>  addSubject(String filename,String subject){
-        String cmdstr="sh "+script+"/addsubject.sh %s %s";
-        cmdstr=String.format(cmdstr,subject,filename);
+    public List<String>  addContent(String filename,String content,String scriptname){
+        String cmdstr="sh "+script+"/"+scriptname+".sh %s %s";
+        cmdstr=String.format(cmdstr,content,filename);
         List<String> result= RuntimeUtil.execForLines(cmdstr);
         if(result.isEmpty())return new ArrayList<>();
         result.add(cmdstr);
         return result;
     }
+     
+    
     public List<String>  trimSpace(String path){
         String cmdstr="sh "+script+"/trim.sh %s ";
         cmdstr=String.format(cmdstr,path);
@@ -411,4 +415,63 @@ public class ExivService {
          return ModelResult.get(0);
          return "";
     }
+
+   // 在ExivService.java文件中添加以下方法
+public List<Map<String, Object>> addInfoToFiles(String filenames, String content,int processingMode ) {
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    if (StrUtil.isEmpty(filenames)) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("error", "文件路径不能为空");
+        result.add(map);
+        return result;
+    }
+
+    List<String> filenameList = StrUtil.split(filenames, ",");
+    filenameList.forEach(it -> {
+        if (it.endsWith(".jpg") || it.endsWith(".JPG")) {
+            Map<String, Object> map = new HashMap<>();
+            String fileString = root + it;
+            List<String> excelResult = new ArrayList<>();
+            String scriptName="";
+            switch (processingMode) {
+                case 2:
+                    scriptName="addsubject";
+                    break;
+                case 3:  
+                     scriptName="addAblum";
+                    break;
+                case 4:     
+                    scriptName="addImageDescription";
+                    break;
+                default:
+                    break;
+            }
+            excelResult = addSubject(fileString, content, scriptName);
+           
+            map.put(it, excelResult);
+            result.add(map);
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            map.put(it, "非jpg文件暂时不能处理");
+            result.add(map);
+        }
+    });
+
+    return result;
+}
+
+private List<String> addDesc(String fileString, String content) {
+     String cmdstr="sh "+script+"/addImageDescription.sh %s %s";
+        cmdstr=String.format(cmdstr,content,fileString);
+        List<String> result= RuntimeUtil.execForLines(cmdstr);
+        if(result.isEmpty())return new ArrayList<>();
+        result.add(cmdstr);
+        return result;
+   
+}
+
+private List<String> addAblum(String fileString, String content) {
+    return new ArrayList<>();
+}
 }

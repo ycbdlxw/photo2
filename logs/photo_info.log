@@ -517,3 +517,231 @@ java.lang.IllegalArgumentException: Invalid character found in the request targe
 2023-10-14 21:27:23.939 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2023-10-14 21:27:23.939 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
 2023-10-14 21:27:23.940 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2023-10-14 21:40:27.608 [http-nio-8080-exec-6] INFO  org.apache.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in the request target [/api/addSubject?filenames=[{%22filename%22:%22IMG_20230929_213400.jpg%22,%22GPSFlag%22:1,%22filePath%22:%22/ycbd/Photos/MobileBackup/M2002J9E/DCIM/Camera/2023/09/IMG_20230929_213400.jpg%22,%22currentDate%22:%222023-09-29%22,%22shootingTime%22:%222023-09-29%2021:34:01%22,%22thumbnails%22:%22images/Volumes_homes_thumbnails_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_213400.jpg%22,%22type%22:%22images%22,%22url%22:%22images/Volumes_homes_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_213400.jpg%22,%22selected%22:true},{%22filename%22:%22IMG_20230929_214351.jpg%22,%22GPSFlag%22:1,%22filePath%22:%22/ycbd/Photos/MobileBackup/M2002J9E/DCIM/Camera/2023/09/IMG_20230929_214351.jpg%22,%22currentDate%22:%222023-09-29%22,%22shootingTime%22:%222023-09-29%2021:43:51%22,%22thumbnails%22:%22images/Volumes_homes_thumbnails_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_214351.jpg%22,%22type%22:%22images%22,%22url%22:%22images/Volumes_homes_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_214351.jpg%22,%22selected%22:true},{%22filename%22:%22IMG_20230929_213355.jpg%22,%22GPSFlag%22:1,%22filePath%22:%22/ycbd/Photos/MobileBackup/M2002J9E/DCIM/Camera/2023/09/IMG_20230929_213355.jpg%22,%22currentDate%22:%222023-09-29%22,%22shootingTime%22:%222023-09-29%2021:33:56%22,%22thumbnails%22:%22images/Volumes_homes_thumbnails_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_213355.jpg%22,%22type%22:%22images%22,%22url%22:%22images/Volumes_homes_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/IMG_20230929_213355.jpg%22,%22selected%22:true},{%22filename%22:%22VID_20230926_081729.mp4%22,%22GPSFlag%22:null,%22filePath%22:%22/ycbd/Photos/MobileBackup/M2002J9E/DCIM/Camera/2023/09/VID_20230926_081729.mp4%22,%22currentDate%22:%222023-09-30%22,%22shootingTime%22:%222023-09-30%2019:42:30%22,%22thumbnails%22:%22images/Volumes_homes_thumbnails_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/VID_20230926_081729.jpg%22,%22type%22:%22videos%22,%22url%22:%22videos/Volumes_homes_ycbd_Photos_MobileBackup_M2002J9E_DCIM_Camera_2023_09/VID_20230926_081729.mp4%22,%22selected%22:true}]&subject=2222 ]. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:494)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:271)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:890)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1789)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2023-10-14 21:44:04.726 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 19027 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 21:44:04.729 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 21:44:05.418 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 21:44:05.425 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:44:05.426 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 21:44:05.426 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 21:44:05.482 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 21:44:05.482 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 728 ms
+2023-10-14 21:44:05.661 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 21:44:05.668 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 21:44:05.668 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 21:44:05.669 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 21:44:05.669 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 21:44:05.669 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 21:44:05.669 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 21:44:05.669 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@23564dd2
+2023-10-14 21:44:05.970 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 21:44:06.001 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:44:06.017 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 21:44:06.171 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 21:44:06.171 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 21:44:06.177 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.728 seconds (JVM running for 2.024)
+2023-10-14 21:45:34.493 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 19185 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 21:45:34.497 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 21:45:35.129 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 21:45:35.134 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:45:35.134 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 21:45:35.134 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 21:45:35.181 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 21:45:35.181 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 659 ms
+2023-10-14 21:45:35.348 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 21:45:35.353 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 21:45:35.353 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 21:45:35.354 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 21:45:35.354 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 21:45:35.354 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 21:45:35.354 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 21:45:35.354 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@4bcdd11
+2023-10-14 21:45:35.651 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 21:45:35.682 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:45:35.695 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 21:45:35.846 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 21:45:35.847 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 21:45:35.854 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.648 seconds (JVM running for 1.892)
+2023-10-14 21:45:44.660 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 19198 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 21:45:44.663 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 21:45:45.276 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 21:45:45.282 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:45:45.282 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 21:45:45.282 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 21:45:45.327 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 21:45:45.327 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 643 ms
+2023-10-14 21:45:45.509 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 21:45:45.516 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 21:45:45.516 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 21:45:45.516 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 21:45:45.517 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 21:45:45.517 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 21:45:45.517 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 21:45:45.517 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@23564dd2
+2023-10-14 21:45:45.803 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 21:45:45.835 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 21:45:45.848 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 21:45:45.998 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 21:45:45.998 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 21:45:46.005 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.583 seconds (JVM running for 1.817)
+2023-10-14 21:55:35.652 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-10-14 21:55:35.652 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-10-14 21:55:35.655 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2023-10-14 22:05:13.329 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 20344 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 22:05:13.330 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 22:05:13.986 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 22:05:13.993 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:05:13.994 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 22:05:13.994 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 22:05:14.045 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 22:05:14.045 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 689 ms
+2023-10-14 22:05:14.227 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 22:05:14.233 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 22:05:14.233 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 22:05:14.233 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 22:05:14.234 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 22:05:14.234 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 22:05:14.234 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 22:05:14.234 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@54895681
+2023-10-14 22:05:14.517 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 22:05:14.552 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:05:14.567 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 22:05:14.718 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 22:05:14.718 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 22:05:14.725 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.674 seconds (JVM running for 1.922)
+2023-10-14 22:05:26.765 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 20361 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 22:05:26.766 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 22:05:27.378 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 22:05:27.384 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:05:27.384 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 22:05:27.385 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 22:05:27.430 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 22:05:27.430 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 642 ms
+2023-10-14 22:05:27.598 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 22:05:27.605 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@3af236d0
+2023-10-14 22:05:27.896 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 22:05:27.928 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:05:27.942 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 22:05:28.091 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 22:05:28.092 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 22:05:28.099 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.6 seconds (JVM running for 1.815)
+2023-10-14 22:06:03.913 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-10-14 22:06:03.913 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-10-14 22:06:03.916 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2023-10-14 22:11:20.473 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 20787 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 22:11:20.474 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 22:11:21.091 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 22:11:21.098 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:11:21.098 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 22:11:21.098 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 22:11:21.149 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 22:11:21.149 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 653 ms
+2023-10-14 22:11:21.322 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 22:11:21.329 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 22:11:21.329 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 22:11:21.330 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 22:11:21.330 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 22:11:21.330 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 22:11:21.330 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 22:11:21.331 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@54895681
+2023-10-14 22:11:21.622 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 22:11:21.652 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:11:21.666 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 22:11:21.815 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 22:11:21.815 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 22:11:21.822 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.618 seconds (JVM running for 1.932)
+2023-10-14 22:11:29.604 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-10-14 22:11:29.604 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-10-14 22:11:29.605 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2023-10-14 22:25:18.044 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Starting PhotoServiceApplication using Java 17.0.7 on ycbddeMacBook-Air.local with PID 21630 (/Users/ycbd/work/photo/target/classes started by ycbd in /Users/ycbd/work/photo)
+2023-10-14 22:25:18.046 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2023-10-14 22:25:18.734 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-10-14 22:25:18.741 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:25:18.742 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-10-14 22:25:18.742 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-10-14 22:25:18.796 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-10-14 22:25:18.796 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 724 ms
+2023-10-14 22:25:18.976 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2023-10-14 22:25:18.984 [main] INFO  org.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-10-14 22:25:18.985 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2023-10-14 22:25:18.987 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2023-10-14 22:25:18.987 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-10-14 22:25:18.987 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2023-10-14 22:25:18.987 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2023-10-14 22:25:18.987 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@54895681
+2023-10-14 22:25:19.267 [main] WARN  o.s.b.a.freemarker.FreeMarkerAutoConfiguration - Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2023-10-14 22:25:19.298 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-10-14 22:25:19.316 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-14 22:25:19.498 [main] INFO  o.s.scheduling.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2023-10-14 22:25:19.499 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2023-10-14 22:25:19.508 [main] INFO  com.ycbd.photoservice.PhotoServiceApplication - Started PhotoServiceApplication in 1.764 seconds (JVM running for 2.095)
+2023-10-14 22:25:36.577 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-10-14 22:25:36.577 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-10-14 22:25:36.579 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
