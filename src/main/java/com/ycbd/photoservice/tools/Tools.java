@@ -102,21 +102,22 @@ public class Tools {
     }
     // 根据输入的字符串，根目录字符，进行拆分为：前段目录，后段目录，文件名，文件扩展名四个部分
     // 1:文件名称 2:图片绝对路径 3:图片缩略图路径
-    public static FileInfo getListString(String framePath, String rooString, String prefix) {
+    public static FileInfo getListString(String filePath, String rooString) {
         // 创建FileInfo对象
         FileInfo fileInfo = new FileInfo();
         // 设置文件路径
-        fileInfo.setFilePath(framePath);
-        // Extract the directory path and file name from the framePath
-        String str = StrUtil.subAfter(framePath, rooString, true);
-        String pathStr = StrUtil.subBefore(framePath, File.separatorChar, true);
+       // fileInfo.setFilePath(StrUtil.subAfter(filePath, rooString, true));
+        // Extract the directory path and file name from the filePath
+        String str = StrUtil.subAfter(filePath, rooString, true);
+        fileInfo.setFilePath(str);
+        String pathStr = StrUtil.subBefore(filePath, File.separatorChar, true);
 
         // 获取文件名
-        str = FileNameUtil.getName(framePath);
+        str = FileNameUtil.getName(filePath);
         // 设置文件名
         fileInfo.setFileName(str);
         // 获取文件扩展名
-        fileInfo.setFileExt(FileNameUtil.getSuffix(framePath));
+        fileInfo.setFileExt(FileNameUtil.getSuffix(filePath));
         // 根据文件名获取文件类型
         String fileType = isImageOrVideoFile(fileInfo.getFileName());
         // 设置文件类型
@@ -131,9 +132,9 @@ public class Tools {
 
         // 拼接目标文件路径
 
-        str = rooString + File.separator + "thumbnails" + StrUtil.subAfter(framePath, rooString, true);
+        str = rooString + File.separator + "thumbnails" + StrUtil.subAfter(filePath, rooString, true);
         if (fileType.equals("videos")) {
-            if (!framePath.contains(rooString))
+            if (!filePath.contains(rooString))
                 str += File.separator + "videos" + File.separator + fileInfo.getFileName();
             str = StrUtil.replace(str, fileInfo.getFileExt(), "jpg", true);
 

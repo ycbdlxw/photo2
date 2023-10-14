@@ -8,7 +8,7 @@ import com.ycbd.photoservice.tools.Tools;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import jakarta.annotation.Resource;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -17,11 +17,14 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 @Service
 public class PhotoService {
@@ -42,37 +45,31 @@ public class PhotoService {
     String prefix;
     @Value("${system.runmode:command}")
     String runmode;
-    @Value("${system.ExcelRootDirName:macosfile}")
-    String ExcelRootDirName;
 
-    public List<Map<String, Object>> getFileInfoByPath(String pathString, String uuid) {
-        List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
-        String dbPathString = pathString + File.separator + "photos.db";
-        sqiteService = new SqiteService(dbPathString);
+
+    /**
+     * 根据路径及用户设备信息，查询最新的新增文件保存到数据库中
+     * @param pathString
+     * @param UserDevices
+     * @return    新增成功的数据记录数
+     */
+    public int saveAddData(String pathString,List<String> UserDevices){
+         List<String> fileDataList = new ArrayList<>();
+        List<String> userfileDataList = new ArrayList<>();      
         try {
-            sqiteService.getConnection(dbPathString);
-            // 判断数据库表是否存在
-            if (!sqiteService.isTableExists()) {
-                sqiteService.createDatabaseAndTable();
+            long dbTime=dbInit(pathString);
+            for (String it : UserDevices) {
+                List<String> userdevices=StrUtil.split(it,"|");
+                String device="";
+                if(userdevices.size()>1)
+                   device=userdevices.get(1);
+                userfileDataList = scanMobileBackupDir(pathString, userdevices.get(0), device, dbTime,3);
+                if (userfileDataList.size() > 0){
+                    fileDataList.addAll(userfileDataList);
+                    userfileDataList.clear();
+                }   
             }
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        }
-        Path path = Paths.get(dbPathString);
-        List<String> fileDataList = new ArrayList<>();
-        List<String> userfileDataList = new ArrayList<>();
-        long dbTime;
-        try {
-            dbTime = Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS).toMillis();
-            userfileDataList = scanMobileBackupDir(pathString, "salina", "EBG-AN00", dbTime);
-            if (userfileDataList.size() > 0)
-                fileDataList.addAll(userfileDataList);
-            userfileDataList.clear();
-            userfileDataList = scanMobileBackupDir(pathString, "ycbd", "M2002J9E", dbTime);
-            if (userfileDataList.size() > 0)
-                fileDataList.addAll(userfileDataList);
+           
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -90,20 +87,93 @@ public class PhotoService {
             }
         }
 
-        String queryDbStr = "select * from fileinfo where  filepath like '%" + pathString
-                + "%' order by shootingTime  desc limit 0,200";
+        return fileDataList.size();
+    }
+
+    public List<Map<String, Object>> getFileInfoByPath(List<String> UserDevices, String uuid) {
+        int addCount= saveAddData(root,UserDevices);
+        System.out.println("新增数据："+addCount);
+        List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+        String queryDbStr = "select * from fileinfo order by id  desc limit 0,200";
         dataList = sqiteService.query(queryDbStr);
         return dataList;
     }
+    public int getQueryTotal(String UserDevices){
+         List<String> user_device=StrUtil.split(UserDevices, "|");
+        String countQuery = "select COUNT(*) from fileinfo where  user = '" + user_device.get(0) + "' and model = '" + user_device.get(1) + "' order by id desc";
+        int total=0; 
+        try {
+            dbInit(root); 
+            total= sqiteService.getTotal(countQuery);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return total;
+    }
+    public List<Map<String, Object>> getFileInfoByUserDevice(String UserDevices,int pageSize,int pageNumber) {
+        List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+        List<String> user_device=StrUtil.split(UserDevices, "|");
+        String queryDbStr = "select * from fileinfo where  user = '" + user_device.get(0) + "' and model = '" + user_device.get(1) + "' order by id desc";
+        List<String> columns = Arrays.asList("filename", "thumbnails", "url", "type", "currentDate", "shootingTime", "GPSFlag", "selected","filePath");
+        try {
+            dbInit(root);
+            if(pageSize==0)
+            pageSize=20;
+            if(pageNumber==0)
+            pageNumber=1;
+            dataList=sqiteService.getDataByPage(queryDbStr,columns,pageSize,pageNumber);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       
+        return dataList;
+    }
+    /**
+     * 根据路径查询指定的数据库文件，并返回数据库文件的最后更新时间
+     * @param pathString
+     * @return
+     * @throws IOException
+     */
+    public long dbInit(String pathString) throws IOException {
+    String dbPathString = pathString + File.separator + "photos.db";
+    sqiteService = new SqiteService(dbPathString);
+    long dbTime=0;
+    try {
+        sqiteService.getConnection(dbPathString);
+        // 判断数据库表是否存在
+        if (!sqiteService.isTableExists()) {
+            sqiteService.createDatabaseAndTable();
+        }
+        Path path = Paths.get(dbPathString);
+        dbTime = Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS).toMillis();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return dbTime;
+}
+// 获取不存在数据的数据
+    private List<String> getDataNotIn(List<String> saveDataList) {
+        String query = saveDataList.stream()
+                .map(str -> "'" + StrUtil.replace(str,root,"") + "'")
+                .collect(Collectors.joining(","));
+        List<String> dataNotInCurrentMonth = sqiteService.queryDataNotInCurrentMonth(" filepath  in (" + query + ")",
+                saveDataList,root);
 
+        return dataNotInCurrentMonth;
+    }
     private void saveData(List<String> saveFileList) {
         if (saveFileList.size() < 1)
             return;
+         List<String> dataNotInCurrentMonth = getDataNotIn(saveFileList);
+         if(dataNotInCurrentMonth.size()<1)return;
         List<Map<String, Object>> saveMapList = new ArrayList<>();
-        for (String it : saveFileList) {
+        for (String it : dataNotInCurrentMonth) {
             Map<String, Object> map = getMapData(it);
             saveMapList.add(map);
         }
+        
         sqiteService.saveDataToTable(saveMapList);
     }
 
@@ -117,7 +187,7 @@ public class PhotoService {
             return new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         // 拆分为目录内容，文件内容两部分
-        FileInfo fileinfo = Tools.getListString(it, root, prefix);
+        FileInfo fileinfo = Tools.getListString(it, root);
         // 获取文件类型
         String fileType = Tools.isImageOrVideoFile(fileinfo.getFileName());
         // 如果不是相片或是图片，直接返回
@@ -192,7 +262,7 @@ public class PhotoService {
     }
 
 
-    private List<String> scanMobileBackupDir(String ROOT_DIR, String user, String device, long dbtime)
+    private List<String> scanMobileBackupDir(String ROOT_DIR, String user, String device, long dbtime,int maxDepth)
             throws IOException {
         List<String> result = new ArrayList<>();
         // 根据数据库最后的更新时间为标准，如果文件或是目录大于则表示有文件或是数据没有更新到数据库
@@ -207,10 +277,10 @@ public class PhotoService {
             // 如果设备不为空，则查询指定用户指定设备目录
             deviceDirPath = userHomePath.resolve("Photos").resolve("MobileBackup").resolve(device);
         }
-        Files.walk(deviceDirPath, 3).filter(Files::isDirectory).forEach(path -> {
+        Files.walk(deviceDirPath, maxDepth).filter(Files::isDirectory).forEach(path -> {
             // 获取目录的最后修改时间
             try {
-                System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
+              //  System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
 
                 long lastModifiedTime = Files.getLastModifiedTime(path).toMillis();
                 // Rest of the code
@@ -224,11 +294,12 @@ public class PhotoService {
             }
 
         });
+        //相机数据处理
         Path CameraDirPath = deviceDirPath.resolve("DCIM").resolve("Camera");
         Files.walk(CameraDirPath, 2).filter(Files::isDirectory).forEach(path -> {
             // 获取目录的最后修改时间
             try {
-                System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
+               // System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
 
                 long lastModifiedTime = Files.getLastModifiedTime(path).toMillis();
                 // Rest of the code
@@ -248,7 +319,7 @@ public class PhotoService {
             try {
                 Files.walk(Paths.get(it), 1).forEach(path -> {
                     try {
-                        System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
+                      //  System.out.println(path.toString() + " " + Files.getLastModifiedTime(path).toString());
                         long lastModifiedTime = Files.getLastModifiedTime(path).toMillis();
 
                         // 如果文件的最后修改时间大于指定时间，新增文件加入返回数组
@@ -270,4 +341,5 @@ public class PhotoService {
         // Add the missing closing brace here
     }
 
+   
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +124,7 @@ public class SqiteService {
 
     }
     private int insertDataIntoTable(Connection connection, List<Map<String, Object> > dataList) throws SQLException {
+       connection.setAutoCommit(false);
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO fileinfo " +
                         "(currentDir, filePath, GPSFlag, shootingTime, currentDate, type, title, url, filename, thumbnails, selected,user,model, desc, md5) " +
@@ -207,13 +209,20 @@ public class SqiteService {
         return dataList;
     }
 
-    public List<String> queryDataNotInCurrentMonth(String queryString, List<String> dataList)  {
+    /**
+     *   根据filePath内容查询是否存在数据库，如果存在，则从dataList中去除，以确保处理不存在数据库中的文件记录
+     * @param queryString
+     * @param dataList
+     * @return
+     */
+
+    public List<String> queryDataNotInCurrentMonth(String queryString, List<String> dataList,String root)  {
         String sqlString="select filePath from fileinfo where "+queryString;
         try (Connection connection = getConnection(dbFilePath);
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(sqlString)) {
             while (resultSet.next()) {
-                dataList.remove(resultSet.getString("filePath"));
+                dataList.remove(root+resultSet.getString("filePath"));
             }
          } catch (SQLException e) {
            // fail("Exception occurred: " + e.getMessage());
@@ -263,5 +272,19 @@ public class SqiteService {
             e.printStackTrace();
         }
         return dataList;
+    }
+
+    public int getTotal(String queryDbStr) {
+        int count=0;
+        try (Connection connection = getConnection(dbFilePath)) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(queryDbStr);
+        if (resultSet.next()) {
+            count = resultSet.getInt(1);
+        }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 }

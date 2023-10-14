@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
@@ -39,7 +39,7 @@ spring:
     filters: stat
 mybatis:
     mapper-locations: classpath:/mapper/*Mapper.xml
-    type-aliases-package: com.ycbd.exiv2service.Mappers
+    type-aliases-package: com.ycbd.photoservice.Mappers
     configuration:
       log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 system:

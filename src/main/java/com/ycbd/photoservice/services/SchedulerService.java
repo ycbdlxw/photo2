@@ -2,6 +2,8 @@ package com.ycbd.photoservice.services;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.ycbd.photoservice.quartz.QueryFileJob;
 
 import cn.hutool.core.map.MapUtil;
-import jakarta.annotation.Resource;
+
 
 @Service
 public class SchedulerService {
@@ -33,6 +35,7 @@ public class SchedulerService {
         jobDetail = JobBuilder.newJob(QueryFileJob.class)
                         .withIdentity(jobKey)
                         .usingJobData("pathString",MapUtil.getStr(taskMap, "pathString"))
+                        .usingJobData("UserDevices",MapUtil.getStr(taskMap, "UserDevices"))
                         .build();
 
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(MapUtil.getStr(taskMap, "Cron"));
