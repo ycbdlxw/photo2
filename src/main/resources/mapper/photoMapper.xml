@@ -82,6 +82,10 @@
      <select id="getPlaceName"  resultType="String">
             select GROUP_CONCAT(place_name,",")  from gpsinfo     
     </select>
+    <!--查询地理位置 gpsinfo-->
+     <select id="getGPSInfo"  resultType="Map">
+            select *  from gpsinfo  where id = ${id}   
+    </select>
     <!--查询用户设备-->
     <select id="getUserAccount"  resultType="Map">
             SELECT ua.id, ua.username, ua.email, pg.name AS permission_group

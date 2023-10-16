@@ -1,9 +1,7 @@
 package com.ycbd.photoservice.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,39 +80,18 @@ public class PhotoController {
         
     }
 
-    @ApiOperation(value = "updateTime", notes = "增加相片标题内容")
+    @ApiOperation(value = "updateTime", notes = "增加相片原始拍摄日期时间更新")
     @RequestMapping(value = "/updateTime", method = RequestMethod.POST)
     public ResultData<List<String>> updateTime(String filename, String dateTime) {
         return ResultData.success(exivService.editDataTime(filename, dateTime));
     }
-
-    @ApiOperation(value = "addLatitude", notes = "增加相片经度值")
-    @RequestMapping(value = "/addLatitude", method = RequestMethod.POST)
-    public ResultData<List<String>> addLatitude(String filename, int Latitude1, int Latitude2, int Latitude3) {
-        String[] LatitudeValue = new String[3];
-        LatitudeValue[0] = Latitude1 + "";
-        LatitudeValue[1] = Latitude2 + "";
-        LatitudeValue[2] = Latitude3 + "";
-        return ResultData.success(exivService.addLatitudeInfo(filename, LatitudeValue));
-    }
-
-    @ApiOperation(value = "addLongitude", notes = "增加相片纬度值")
-    @RequestMapping(value = "/addLongitude", method = RequestMethod.POST)
-    public ResultData<List<String>> addLongitude(String filename, int Longitude1, int Longitude2, int Longitude3) {
-        String[] LongitudeValue = new String[3];// {"","",""};
-        LongitudeValue[0] = Longitude1 + "";
-        LongitudeValue[1] = Longitude2 + "";
-        LongitudeValue[2] = Longitude3 + "";
-        return ResultData.success(exivService.addLongitudeInfo(filename, LongitudeValue));
-    }
-
     @ApiOperation(value = "addGPS", notes = "增加相片GPS值")
     @RequestMapping(value = "/addGPS", method = RequestMethod.POST)
     public ResultData<List<String>> addGPS(String filename, @RequestBody Map<String, Object> gpsdata) {
         return ResultData.success(exivService.addGPSInfo(filename, gpsdata));
     }
 
-    @ApiOperation(value = "getGPS", notes = "相片GPS值")
+    @ApiOperation(value = "getGPS", notes = "获取相片GPS值")
     @RequestMapping(value = "/getGPS", method = RequestMethod.POST)
     public ResultData<Map<String, Object>> getGPS(String filename) {
         return ResultData.success(exivService.getGPSInfo(filename));

@@ -35,4 +35,5 @@ public interface PhotoMapper {
     List<Map<String, Object>> getTreeData(String table);
     //用户登录
     List<Map<String, Object>> getUserAccount(String name,String password);
+    Map<String, Object> getGPSInfo(int id);
 }

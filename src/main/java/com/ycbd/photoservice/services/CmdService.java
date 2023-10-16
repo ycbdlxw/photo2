@@ -81,6 +81,7 @@ public class CmdService {
         if (StrUtil.isBlank(result))
             return "";
         MD5 md5 = new MD5();
+        //去除file的相关内容
         String md5Str = md5.digestHex(result);
         return md5Str;
 

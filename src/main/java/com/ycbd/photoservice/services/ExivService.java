@@ -2,9 +2,13 @@ package com.ycbd.photoservice.services;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RuntimeUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+
+import com.ycbd.photoservice.Mappers.PhotoMapper;
 import com.ycbd.photoservice.tools.Tools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +39,8 @@ import javax.annotation.Resource;
 public class ExivService {
     @Resource
     protected  CmdService cmdService;
+    @Resource
+    protected  PhotoMapper mapper;
     @Value("${system.script:/Users/ycbd/exiv2}")
     String script;
      @Value("${system.root:/Volumes/homes}")
@@ -427,7 +433,32 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
         return result;
     }
 
+    Map<String,Object> gpsdata=new HashMap<>();
+    
+    if(processingMode==1){
+         if (content.endsWith(".jpg") || content.endsWith(".JPG"))
+            gpsdata=getGPSInfo(content);
+        else
+        {
+            int id=0;
+          if(NumberUtil.isInteger(content)){
+           id = Integer.parseInt(content);
+           gpsdata= mapper.getGPSInfo(id);
+          }
+            
+            
+        }
+        if(MapUtil.isEmpty(gpsdata))
+        {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "选择无有效的位置数据信息");
+            result.add(map);
+            return result;
+        }
+    }
+     
     List<String> filenameList = StrUtil.split(filenames, ",");
+    final Map<String,Object> gpsfiledata=gpsdata;
     filenameList.forEach(it -> {
         if (it.endsWith(".jpg") || it.endsWith(".JPG")) {
             Map<String, Object> map = new HashMap<>();
@@ -435,6 +466,11 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
             List<String> excelResult = new ArrayList<>();
             String scriptName="";
             switch (processingMode) {
+                case 1:
+                //分为三种情况处理，上传文件，自我选择为文件名，下拉选择为下拉ID值
+                  
+                   excelResult = addGPSInfo(fileString, gpsfiledata);
+                    break;
                 case 2:
                     scriptName="addsubject";
                     break;
@@ -447,7 +483,8 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
                 default:
                     break;
             }
-            excelResult = addSubject(fileString, content, scriptName);
+            if(processingMode>1)
+               excelResult = addContent(fileString, content, scriptName);
            
             map.put(it, excelResult);
             result.add(map);
@@ -459,19 +496,5 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
     });
 
     return result;
-}
-
-private List<String> addDesc(String fileString, String content) {
-     String cmdstr="sh "+script+"/addImageDescription.sh %s %s";
-        cmdstr=String.format(cmdstr,content,fileString);
-        List<String> result= RuntimeUtil.execForLines(cmdstr);
-        if(result.isEmpty())return new ArrayList<>();
-        result.add(cmdstr);
-        return result;
-   
-}
-
-private List<String> addAblum(String fileString, String content) {
-    return new ArrayList<>();
 }
 }
