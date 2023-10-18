@@ -2,6 +2,7 @@ package com.ycbd.photoservice.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,14 @@ public class PhotoController {
         return ResultData.success(pService.getFileInfoByPath(UserDevices, ""));
     }
 
+      @ApiOperation(value = "文件元数据信息", notes = "文件元数据信息")
+    @PostMapping(value = "/getFileMeta")
+    @ResponseBody
+    public ResultData<Map<String, Object> > getFileMeta(String fileString) throws IOException {
+     
+        return ResultData.success(pService.getMapData(fileString));
+    }
+
     @ApiOperation(value = "指定用户目录文件信息", notes = "获取指定用户目录文件信息")
     @PostMapping(value = "/getUserDeviceFile")
     @ResponseBody
@@ -76,6 +85,20 @@ public class PhotoController {
     @RequestMapping(value = "/addInfoToFiles", method = RequestMethod.POST)
     public ResultData<List<Map<String, Object>>> addInfoToFiles(String filenames, String content,int processingMode) {
         List<Map<String, Object>> result = exivService.addInfoToFiles(filenames, content,processingMode);
+        
+        String updateSql = null;
+        if (!result.isEmpty()) {
+            Map<String, Object> resultMap = result.get(result.size()-1);
+            updateSql = (String) resultMap.get("updateSql");
+        }
+        int updateCount=0;
+        if (updateSql != null) {
+            updateCount=pService.updateContent(updateSql);
+            Map<String,Object> updateMap=new HashMap<>();
+            updateMap.put("updateCount",updateCount);
+            result.add(updateMap);
+
+        }
         return ResultData.success(result);
         
     }

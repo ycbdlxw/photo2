@@ -32,6 +32,7 @@
                </foreach>
            </foreach>
     </insert>
+    
     <!--从列属性表中查询编辑字段-->
     <select id="getFormData"  resultType="Map">
             SELECT name as field,pagename as label,

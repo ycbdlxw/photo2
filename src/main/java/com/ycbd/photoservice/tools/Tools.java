@@ -105,15 +105,9 @@ public class Tools {
     public static FileInfo getListString(String filePath, String rooString) {
         // 创建FileInfo对象
         FileInfo fileInfo = new FileInfo();
-        // 设置文件路径
-       // fileInfo.setFilePath(StrUtil.subAfter(filePath, rooString, true));
-        // Extract the directory path and file name from the filePath
-        String str = StrUtil.subAfter(filePath, rooString, true);
-        fileInfo.setFilePath(str);
-        String pathStr = StrUtil.subBefore(filePath, File.separatorChar, true);
-
+        fileInfo.setRelativePath(StrUtil.replace(StrUtil.subBefore(filePath,File.separatorChar, true),rooString,""));
         // 获取文件名
-        str = FileNameUtil.getName(filePath);
+        String str = FileNameUtil.getName(filePath);
         // 设置文件名
         fileInfo.setFileName(str);
         // 获取文件扩展名
@@ -122,38 +116,12 @@ public class Tools {
         String fileType = isImageOrVideoFile(fileInfo.getFileName());
         // 设置文件类型
         fileInfo.setFileType(fileType);
-
         // 拼接文件路径网址，文件类型，文件路径（如果是非windows系统，需要去除首个/字符），文件名称
-        str = fileType + File.separator + pathStr.substring(1).replace('/', '_') + File.separator
-                + fileInfo.getFileName();
+        str =StrUtil.subBefore(fileInfo.getRelativePath(), File.separator, true).replace('/', '_');
         // 设置文件路径
-        fileInfo.setFileUrl(str);
-        fileInfo.setCurrentDir(StrUtil.subAfter(pathStr, File.separator, true));
-
+        List<String> filenameList=StrUtil.split(fileInfo.getRelativePath(),File.separatorChar);
+        fileInfo.setCurrentDir(filenameList.get(filenameList.size()-1));
         // 拼接目标文件路径
-
-        str = rooString + File.separator + "thumbnails" + StrUtil.subAfter(filePath, rooString, true);
-        if (fileType.equals("videos")) {
-            if (!filePath.contains(rooString))
-                str += File.separator + "videos" + File.separator + fileInfo.getFileName();
-            str = StrUtil.replace(str, fileInfo.getFileExt(), "jpg", true);
-
-        }
-
-        // 设置文件路径
-        fileInfo.setTargeFile(str);
-        // 拼接文件路径
-        str = StrUtil.subBefore(str, File.separator, true);
-        // 设置文件路径
-        fileInfo.setTargePath(str);
-        // 拼接缩略图文件路径
-        str = "images" + File.separator + fileInfo.getTargePath().substring(1).replace('/', '_')
-                + File.separator + fileInfo.getFileName();
-        // 根据文件类型获取缩略图
-        if (fileType.equals("videos"))
-            str = StrUtil.replace(str, fileInfo.getFileExt(), "jpg", false);
-
-        fileInfo.setThumbnails(str);
         return fileInfo;
 
     }
@@ -167,19 +135,19 @@ public class Tools {
         return "";
     }
 
-   public static boolean Thumbnails(FileInfo fileinfo) {
+   public static boolean Thumbnails(FileInfo fileinfo,String rooString) {
         String fileType = fileinfo.getFileType();
-        if (FileUtil.exist(fileinfo.getTargeFile()))
+        if (FileUtil.exist(fileinfo.getTargeFile(rooString)))
             return true;
         // 判断目标目录是否存在，如果不存在，则创建
-        if (!FileUtil.exist(fileinfo.getTargePath()))
-            FileUtil.mkdir(fileinfo.getTargePath());
+        if (!FileUtil.exist(fileinfo.getTargePath(rooString)))
+            FileUtil.mkdir(fileinfo.getTargePath(rooString));
         if (fileType.equals("images")) {
             int width = 300, heigh = 300;
             try {
-                Thumbnails.of(new File(fileinfo.getFilePath()))
+                Thumbnails.of(new File(fileinfo.getFileNamePath(rooString)))
                         .size(width, heigh)
-                        .toFile(new File(fileinfo.getTargeFile()));
+                        .toFile(new File(fileinfo.getTargeFile(rooString)));
                 return true;
 
             } catch (IOException e) {

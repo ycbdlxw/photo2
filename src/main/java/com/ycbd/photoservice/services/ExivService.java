@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -425,6 +427,7 @@ public class ExivService {
    // 在ExivService.java文件中添加以下方法
 public List<Map<String, Object>> addInfoToFiles(String filenames, String content,int processingMode ) {
     List<Map<String, Object>> result = new ArrayList<>();
+   
 
     if (StrUtil.isEmpty(filenames)) {
         Map<String, Object> map = new HashMap<>();
@@ -459,6 +462,7 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
      
     List<String> filenameList = StrUtil.split(filenames, ",");
     final Map<String,Object> gpsfiledata=gpsdata;
+     List<String> updateFiles= new ArrayList<>();
     filenameList.forEach(it -> {
         if (it.endsWith(".jpg") || it.endsWith(".JPG")) {
             Map<String, Object> map = new HashMap<>();
@@ -467,8 +471,7 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
             String scriptName="";
             switch (processingMode) {
                 case 1:
-                //分为三种情况处理，上传文件，自我选择为文件名，下拉选择为下拉ID值
-                  
+                //分为三种情况处理，上传文件，自我选择为文件名，下拉选择为下拉ID值  
                    excelResult = addGPSInfo(fileString, gpsfiledata);
                     break;
                 case 2:
@@ -487,6 +490,8 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
                excelResult = addContent(fileString, content, scriptName);
            
             map.put(it, excelResult);
+            if(excelResult.size()<1)
+                updateFiles.add(fileString);
             result.add(map);
         } else {
             Map<String, Object> map = new HashMap<>();
@@ -494,7 +499,42 @@ public List<Map<String, Object>> addInfoToFiles(String filenames, String content
             result.add(map);
         }
     });
-
+    if(updateFiles.size()>0)
+    {
+        Map<String, Object> map = new HashMap<>();
+        String updateSql=updateContentSql(updateFiles,content,processingMode);
+         map.put("updateSql", updateSql);
+        result.add(map);
+    }
     return result;
+}
+public String updateContentSql(List<String> filepathList, String content, int processingMode) {
+
+    // 更新保存数据库
+  
+        List<String> updatedFilepaths = filepathList.stream()
+                .map(filepath -> "'" + filepath + "'")
+                .collect(Collectors.toList());
+        String updatedFilepathsStr = String.join(",", updatedFilepaths);
+
+        String updateSql = "";
+        switch (processingMode) {
+            case 1:
+                 updateSql = "UPDATE fileinfo SET GPSFlag = 1 WHERE filepath IN (" + updatedFilepathsStr + ")";
+                break;
+            case 2:
+                updateSql = "UPDATE fileinfo SET title = '" + content + "' WHERE filepath IN (" + updatedFilepathsStr + ")";
+                break;
+            case 3:
+                updateSql = "UPDATE fileinfo SET ablum = '" + content + "' WHERE filepath IN (" + updatedFilepathsStr + ")";
+                break;
+            case 4:
+                updateSql = "UPDATE fileinfo SET `desc` = '" + content + "' WHERE filepath IN (" + updatedFilepathsStr + ")";
+                break;
+            default:
+                break;
+        }
+    
+    return updateSql;
 }
 }

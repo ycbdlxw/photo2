@@ -6,6 +6,11 @@ import org.springframework.stereotype.Service;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 
+import cn.hutool.core.convert.impl.DateConverter;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +22,7 @@ import java.util.Map;
 public class SqiteService {
     private final String dbFilePath;
 
-    public SqiteService(@Value("${db.file.path:/Volumes/photos.db}")String dbFilePath) {
+    public SqiteService(@Value("${db.file.path:/Volumes/homes/photos.db}")String dbFilePath) {
         this.dbFilePath = dbFilePath;
     }
 
@@ -143,7 +148,7 @@ public class SqiteService {
             statement.setString(7, (String) data.get("title"));
             statement.setString(8, (String) data.get("url"));
             statement.setString(9, (String) data.get("filename"));
-            statement.setString(10, (String) data.get("thumbnails"));
+            statement.setBoolean(10, (Boolean) data.get("thumbnails"));
             statement.setBoolean(11, (Boolean) data.get("selected"));
             statement.setString(12, (String) data.get("user"));
             statement.setString(13, (String) data.get("model"));
@@ -176,7 +181,21 @@ public class SqiteService {
         }
         return dataList;
     }
-    
+        public long queryLastTime() {
+          long lastTime=0;
+         try (Connection connection = getConnection(dbFilePath)) {
+             Statement statement = connection.createStatement();
+            ResultSet row = statement.executeQuery("select max(shootingTime) from fileinfo");
+             if (row.next()) {
+             lastTime= DateUtil.parse(row.getString(1).toString(), "yyyy-MM-dd HH:mm:ss").toTimestamp().getTime();
+
+             }
+          } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastTime;
+    }
+
     public List<Map<String, Object>> query(String queryStr) {
         List<Map<String, Object>> dataList = new ArrayList<>();
          try (Connection connection = getConnection(dbFilePath)) {
@@ -282,6 +301,18 @@ public class SqiteService {
         if (resultSet.next()) {
             count = resultSet.getInt(1);
         }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public int updateContent(String updateString) {
+         int count=0;
+        try (Connection connection = getConnection(dbFilePath)) {
+            Statement statement = connection.createStatement();
+           count = statement.executeUpdate(updateString);
+       
         } catch (SQLException e) {
             e.printStackTrace();
         }

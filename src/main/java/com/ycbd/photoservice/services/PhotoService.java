@@ -57,7 +57,12 @@ public class PhotoService {
          List<String> fileDataList = new ArrayList<>();
         List<String> userfileDataList = new ArrayList<>();      
         try {
-            long dbTime=dbInit(pathString);
+
+            long dbTime=0;
+            if(dbInit(root))
+               dbTime=sqiteService.queryLastTime();
+            if(dbTime<1)
+               return 0;
             for (String it : UserDevices) {
                 List<String> userdevices=StrUtil.split(it,"|");
                 String device="";
@@ -98,6 +103,7 @@ public class PhotoService {
         dataList = sqiteService.query(queryDbStr);
         return dataList;
     }
+   
     public int getQueryTotal(String UserDevices){
          List<String> user_device=StrUtil.split(UserDevices, "|");
         String countQuery = "select COUNT(*) from fileinfo where  user = '" + user_device.get(0) + "' and model = '" + user_device.get(1) + "' order by id desc";
@@ -111,11 +117,22 @@ public class PhotoService {
         }
         return total;
     }
+     public int updateContent(String updateString){
+        int total=0; 
+        try {
+            dbInit(root); 
+            total= sqiteService.updateContent(updateString);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return total;
+    }
     public List<Map<String, Object>> getFileInfoByUserDevice(String UserDevices,int pageSize,int pageNumber) {
         List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
         List<String> user_device=StrUtil.split(UserDevices, "|");
         String queryDbStr = "select * from fileinfo where  user = '" + user_device.get(0) + "' and model = '" + user_device.get(1) + "' order by id desc";
-        List<String> columns = Arrays.asList("filename", "thumbnails", "url", "type", "currentDate", "shootingTime", "GPSFlag", "selected","filePath");
+        List<String> columns = Arrays.asList("currentDir","filename", "thumbnails", "url", "type", "currentDate", "shootingTime", "GPSFlag", "selected","filePath");
         try {
             dbInit(root);
             if(pageSize==0)
@@ -136,22 +153,20 @@ public class PhotoService {
      * @return
      * @throws IOException
      */
-    public long dbInit(String pathString) throws IOException {
+    public boolean dbInit(String pathString) throws IOException {
     String dbPathString = pathString + File.separator + "photos.db";
     sqiteService = new SqiteService(dbPathString);
-    long dbTime=0;
     try {
         sqiteService.getConnection(dbPathString);
         // 判断数据库表是否存在
         if (!sqiteService.isTableExists()) {
             sqiteService.createDatabaseAndTable();
         }
-        Path path = Paths.get(dbPathString);
-        dbTime = Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS).toMillis();
     } catch (SQLException e) {
         e.printStackTrace();
+        return false;
     }
-    return dbTime;
+    return true;
 }
 // 获取不存在数据的数据
     private List<String> getDataNotIn(List<String> saveDataList) {
@@ -174,7 +189,10 @@ public class PhotoService {
             saveMapList.add(map);
         }
         
-        sqiteService.saveDataToTable(saveMapList);
+        saveDataByList(saveMapList);
+    }
+    public int saveDataByList(List<Map<String, Object>> saveMapList){
+       return  sqiteService.saveDataToTable(saveMapList);
     }
 
     public Map<String, Object> getMapData(String it) {
@@ -195,13 +213,10 @@ public class PhotoService {
             return new HashMap<>();
         fileinfo.setFileType(fileType);
         boolean ThumbnailsFlag = getThumbnailsFlag(fileinfo, runmode, fileType, cmdService);
-        if (ThumbnailsFlag)
-            map.put("thumbnails", fileinfo.getThumbnails());
-        else
-            map.put("thumbnails", "");
-        map.put("url", fileinfo.getFileUrl());
+        map.put("thumbnails", ThumbnailsFlag);
+        map.put("url", StrUtil.replace(fileinfo.getRelativePath(),File.separator,"_"));
         map.put("filename", fileinfo.getFileName());
-        map.put("filePath", fileinfo.getFilePath());
+        map.put("filePath", fileinfo.getRelativePath());
         map.put("selected", false);
         map.put("currentDir", fileinfo.getCurrentDir());
         map.put("type", fileinfo.getFileType());
@@ -210,15 +225,13 @@ public class PhotoService {
             map.put("user", item.get(3));
         else
             map.put("user", "");
-        if (it.contains("Camera") && item.size() > 6)
-            map.put("model", item.get(6));
-        else
-            map.put("model", "");
-
+           int MobileBackupIndex= item.indexOf("MobileBackup");
+        if ( item.size() > MobileBackupIndex)
+            map.put("model", item.get(MobileBackupIndex+1));
         if (fileType.equals("images"))
             exivService.getMetaDataInfo(it, map);
         else {
-            String dateTimeStr = Tools.extractDateTimeByFile(map.get("filePath").toString());
+            String dateTimeStr = Tools.extractDateTimeByFile(root+map.get("filePath").toString());
             map.put("currentDate", StrUtil.split(dateTimeStr, " ").get(0));
             map.put("shootingTime", dateTimeStr);
         }
@@ -230,19 +243,22 @@ public class PhotoService {
    public Boolean getThumbnailsFlag(FileInfo fileinfo, String runmode, String fileType, CmdService cmdService) {
         boolean ThumbnailsFlag = false;
         if (fileType.equals("videos"))
-            System.out.println("getTargeFile: " + fileinfo.getTargeFile());
-        if (FileUtil.exist(fileinfo.getTargeFile()))
+            System.out.println("getTargeFile: " + fileinfo.getTargeFile(root));
+        if (FileUtil.exist(fileinfo.getTargeFile(root)))
             return true;
         // 判断目标目录是否存在，如果不存在，则创建
-        if (!FileUtil.exist(fileinfo.getTargePath()))
-            FileUtil.mkdir(fileinfo.getTargePath());
+        String targePathString=fileinfo.getTargePath(root);
+        String targeFileString=fileinfo.getTargeFile(root);
+        String sourceFileString=fileinfo.getFileNamePath(root);
+        if (!FileUtil.exist(targePathString))
+            FileUtil.mkdir(targePathString);
         if (fileType.equals("videos")) {
 
-            if (!FileUtil.isFile(fileinfo.getTargeFile())) {
+            if (!FileUtil.isFile(targeFileString)) {
                 if (runmode.equals("command"))
-                    ThumbnailsFlag = cmdService.getVideoImage(fileinfo.getFilePath(), fileinfo.getTargeFile());
+                    ThumbnailsFlag = cmdService.getVideoImage(sourceFileString, targeFileString);
                 if (runmode.equals("script")) {
-                    List<String> cmdList = cmdService.ffmpeg(fileinfo.getFilePath(), fileinfo.getTargeFile());
+                    List<String> cmdList = cmdService.ffmpeg(sourceFileString, targeFileString);
                     if (cmdList != null && cmdList.size() > 0) {
                         if (cmdList.get(cmdList.size() - 1).contains("Invalid data"))
                             ThumbnailsFlag = false;
@@ -253,7 +269,7 @@ public class PhotoService {
 
         } else {
             try {
-                ThumbnailsFlag = Tools.Thumbnails(fileinfo);
+                ThumbnailsFlag = Tools.Thumbnails(fileinfo,root);
             } catch (Exception e) {
                 return false;
             }
