@@ -45,7 +45,7 @@ mybatis:
 system:
       prefix: http://localhost:8080/
       script: /Users/ycbd/exiv2
-      root:   /Volumes/homes
+      root:   /Volumes/homes/
       runmode: command
       csvRootDirName: macoscsvfile
 

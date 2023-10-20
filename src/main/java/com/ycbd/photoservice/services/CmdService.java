@@ -96,77 +96,53 @@ public class CmdService {
         }
         return result;
     }
+public boolean getVideoImage(String videoFilePath, String imageSavePath) {
+    try {
+        List<String> command = new ArrayList<>();
+        command.add("ffmpeg");
+        command.add("-ss");
+        command.add("00:00:03");
+        command.add("-i");
+        command.add(videoFilePath);
+        command.add("-frames:v");
+        command.add("1");
+        command.add(imageSavePath);
+        command.add("-y");
 
-    public boolean getVideoImage(String videoFilePath, String imageSavePath) {
-        try {
-            // ffmpeg -i C:\Video\test.mp4 -ss 1 -f image2 C\:Image\out.jpg回车
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true); // 合并错误流和输出流
+        Process process = processBuilder.start();
 
-            List<String> command = new ArrayList<>();
-            command.add("ffmpeg");
-            command.add("-ss");
-            command.add("00:00:03");
-            command.add("-i");
-            command.add(videoFilePath);
-            command.add("-frames:v");
-            command.add("1");
-            command.add(imageSavePath);
-
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            // 将错误流与输出流合并
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-
-            // 读取输出流
-            // try (BufferedReader reader = new BufferedReader(new
-            // InputStreamReader(process.getInputStream()))) {
-            // String line;
-            // while ((line = reader.readLine()) != null) {
-            // // 处理命令输出
-            // System.out.println(line);
-            // }
-            // }
-
-            // 创建一个线程来等待命令执行完毕
-            Thread waitThread = new Thread(() -> {
-                try {
-                    process.waitFor();
-                } catch (InterruptedException e) {
-                    // 发生异常时终止进程
-                    process.destroy();
-                }
-            });
-            waitThread.start();
-
-            // 等待命令执行完毕，设置超时时间为1分钟
+        // 创建一个新的线程来读取和显示命令的输出
+        new Thread(() -> {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
             try {
-                waitThread.join(1 * 60 * 1000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                     if (line.contains("already exists. Overwrite")) {
+                break; // 如果输出包含"already exists. Overwrite"，则退出循环
+            }
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+        }).start();
 
-            if (waitThread.isAlive()) {
-                // 超时，终止进程
-                process.destroy();
-                System.out.println("命令行操作执行超时");
-                return false;
-            } else {
-                int exitCode = process.exitValue();
-                if (exitCode == 0) {
-                    System.out.println(imageSavePath + " 命令行操作执行成功");
-                } else {
-                    System.out.println("命令行操作执行失败");
-                    return false;
-                }
-            }
-            File file = new File(imageSavePath);
-            return file.exists();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        int exitCode = process.waitFor(); // 等待命令执行完成
+        if (exitCode == 0) {
+            System.out.println(imageSavePath + " 命令行操作执行成功");
+        } else {
+            System.out.println("命令行操作执行失败");
             return false;
-
         }
 
+        File file = new File(imageSavePath);
+        return file.exists(); // 检查截图文件是否存在
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
     }
+}
 }

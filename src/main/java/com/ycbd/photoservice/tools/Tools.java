@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.ycbd.photoservice.model.FileInfo;
 
 import cn.hutool.core.io.FileUtil;
@@ -25,6 +27,20 @@ import net.coobird.thumbnailator.Thumbnails;
 
 
 public class Tools {
+
+       public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
 
      /**
      *
@@ -102,10 +118,12 @@ public class Tools {
     }
     // 根据输入的字符串，根目录字符，进行拆分为：前段目录，后段目录，文件名，文件扩展名四个部分
     // 1:文件名称 2:图片绝对路径 3:图片缩略图路径
-    public static FileInfo getListString(String filePath, String rooString) {
+    public static FileInfo getListString(String filePath, String rootString) {
         // 创建FileInfo对象
         FileInfo fileInfo = new FileInfo();
-        fileInfo.setRelativePath(StrUtil.replace(StrUtil.subBefore(filePath,File.separatorChar, true),rooString,""));
+        if(!StrUtil.endWith(rootString,File.separatorChar))
+            rootString =rootString+File.separator;
+        fileInfo.setRelativePath(StrUtil.replace(StrUtil.subBefore(filePath,File.separatorChar, true),rootString,""));
         // 获取文件名
         String str = FileNameUtil.getName(filePath);
         // 设置文件名
@@ -135,19 +153,19 @@ public class Tools {
         return "";
     }
 
-   public static boolean Thumbnails(FileInfo fileinfo,String rooString) {
+   public static boolean Thumbnails(FileInfo fileinfo,String rootString) {
         String fileType = fileinfo.getFileType();
-        if (FileUtil.exist(fileinfo.getTargeFile(rooString)))
+        if (FileUtil.exist(fileinfo.getTargeFile(rootString)))
             return true;
         // 判断目标目录是否存在，如果不存在，则创建
-        if (!FileUtil.exist(fileinfo.getTargePath(rooString)))
-            FileUtil.mkdir(fileinfo.getTargePath(rooString));
+        if (!FileUtil.exist(fileinfo.getTargePath(rootString)))
+            FileUtil.mkdir(fileinfo.getTargePath(rootString));
         if (fileType.equals("images")) {
             int width = 300, heigh = 300;
             try {
-                Thumbnails.of(new File(fileinfo.getFileNamePath(rooString)))
+                Thumbnails.of(new File(fileinfo.getFileNamePath(rootString)))
                         .size(width, heigh)
-                        .toFile(new File(fileinfo.getTargeFile(rooString)));
+                        .toFile(new File(fileinfo.getTargeFile(rootString)));
                 return true;
 
             } catch (IOException e) {

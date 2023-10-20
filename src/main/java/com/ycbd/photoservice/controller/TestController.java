@@ -48,9 +48,10 @@ public class TestController {
 
      @ApiOperation(value = "fileinfo", notes = "fileinfo")
     @RequestMapping(value = "/fileinfo", method = RequestMethod.POST)
-    public ResultData<FileInfo> fileinfo(String fileString) {
+    public ResultData<FileInfo> fileinfo(String fileString,String driveString) {
+        //"/Volumes/homes"
 
-       FileInfo fileinfo= Tools.getListString(fileString,"/Volumes/homes");
+       FileInfo fileinfo= Tools.getListString(fileString,driveString);
 
      return ResultData.success(fileinfo);
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 导入所需的命名空间 -->
+<mapper namespace="com.ycbd.photoservice.Mappers.SystemMapper">
+
+    <!-- 定义getUserAccount查询 -->
+    <select id="getUserAccount" resultType="Map">
+        SELECT ua.id, ua.username, ua.email, pg.name AS permission_group
+        FROM user_account ua
+        JOIN permission_group pg ON ua.permission_group_id = pg.id
+        WHERE ua.username = #{username} AND ua.password = #{password}
+    </select>
+
+</mapper>

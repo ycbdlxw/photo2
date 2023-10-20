@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,29 @@ public class SystemController {
 	@Resource
     protected SchedulerService scheduleJob;
 
+	@ApiOperation(value = "用户登录", notes = "用户登录")
+    @PostMapping(value = "/login")
+    @ResponseBody
+    public ResultData<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
+		 String username = (String)request.get("username");
+         String password = (String)request.get("password");
+        Map<String, Object> result=service.login(username, password);
+        return ResultData.success(result);
+    }
+	@ApiOperation(value = "用户信息", notes = "用户信息")
+    @GetMapping(value = "/getUserInfo")
+    @ResponseBody
+    public ResultData<Map<String, Object>> getUserInfo() { 
+        Map<String, Object> result=new HashMap<>();
+        return ResultData.success(result);
+    }
+	@ApiOperation(value = "注销用户信息", notes = "注销用户信息")
+    @PostMapping(value = "/logout")
+    @ResponseBody
+    public ResultData<Map<String, Object>> logout() { 
+        Map<String, Object> result=new HashMap<>();
+        return ResultData.success(result);
+    }
 	 @ApiOperation(value = "定时任务增加", notes = "获取指定目录文件信息")
     @PostMapping(value = "/scheduleJob")
     @ResponseBody

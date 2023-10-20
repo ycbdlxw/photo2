@@ -39,7 +39,7 @@ public class PhotoService {
     // private MessageSender messageSender;
     // @Resource
     // private RabbitTemplate rabbitTemplate;
-    @Value("${system.root:/Volumes/homes}")
+    @Value("${system.root:/Volumes/homes/}")
     String root;
     @Value("${system.prefix:http://homenas.ycbd.work:8080/}")
     String prefix;

@@ -12,6 +12,8 @@ import lombok.Data;
 public class ResultData<T> {
     /** 结果状态 ,具体状态码参见ResultData.java*/
     private int status;
+    private int code;
+    private T result;
     private String message;
     private T data;
     private long timestamp ;
@@ -24,15 +26,16 @@ public class ResultData<T> {
 
     public static <T> ResultData<T> success(T data) {
         ResultData<T> resultData = new ResultData<>();
-        resultData.setStatus(202);//ReturnCode.RC100.getCode());
+        resultData.setCode(200);//ReturnCode.RC100.getCode());
         resultData.setMessage("203");//ReturnCode.RC100.getMessage());
-        resultData.setData(data);
+        resultData.setResult(data);
+       
         return resultData;
     }
 
     public static <T> ResultData<T> fail(int code, String message) {
         ResultData<T> resultData = new ResultData<>();
-        resultData.setStatus(code);
+        resultData.setCode(code);
         resultData.setMessage(message);
         return resultData;
     }

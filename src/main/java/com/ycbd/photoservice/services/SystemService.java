@@ -1,5 +1,6 @@
 package com.ycbd.photoservice.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.ycbd.photoservice.Mappers.PhotoMapper;
+import com.ycbd.photoservice.Mappers.SystemMapper;
 
 
 
@@ -15,6 +17,12 @@ import com.ycbd.photoservice.Mappers.PhotoMapper;
 public class SystemService {
      @Resource
    protected PhotoMapper mapper;
+   @Resource
+   protected SystemMapper systemMapper;
+   public Map<String, Object> login(String username,String password){
+    
+    return systemMapper.getUserAccount(username,password);
+   }
 
      public List<Map<String, Object>> getMenuTree() {
         return mapper.getMenuTree();
